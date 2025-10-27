@@ -19,6 +19,7 @@ export class Name {
     private components: string[] = [];
 
     /** Expects that all Name components are properly masked */
+    /** @methodtype initialization-method */
     constructor(other: string[], delimiter?: string) {
         if (!Array.isArray(other)) {
             throw new Error("Expected an array of components");
@@ -32,6 +33,7 @@ export class Name {
      * Special characters are not escaped (creating a human-readable string)
      * Users can vary the delimiter character to be used
      */
+    /** @methodtype conversion-method */
     public asString(delimiter: string = this.delimiter): string {
         let noEscapes = this.components.map(c=>
             c.replaceAll(ESCAPE_CHARACTER+ESCAPE_CHARACTER, ESCAPE_CHARACTER));
@@ -45,6 +47,7 @@ export class Name {
      * Machine-readable means that from a data string, a Name can be parsed back in
      * The special characters in the data string are the default characters
      */
+    /** @methodtype conversion-method */
     public asDataString(): string {
         if(DEFAULT_DELIMITER !== this.delimiter){
             let masked = this.components.map(c => c.replaceAll(DEFAULT_DELIMITER, ESCAPE_CHARACTER + DEFAULT_DELIMITER));
@@ -54,6 +57,7 @@ export class Name {
     }
 
     /** Returns properly masked component string */
+    /** @methodtype get-method */
     public getComponent(i: number): string {
         if (i < 0 || i >= this.components.length) {
             throw new Error("Index out of range");
@@ -62,6 +66,7 @@ export class Name {
     }
 
     /** Expects that new Name component c is properly masked */
+    /** @methodtype set-method */
     public setComponent(i: number, c: string): void {
         if (i < 0 || i >= this.components.length) {
             throw new Error("Index out of range");
@@ -70,11 +75,13 @@ export class Name {
     }
 
      /** Returns number of components in Name instance */
+     /** @methodtype get-method */
      public getNoComponents(): number {
         return this.components.length;
     }
 
     /** Expects that new Name component c is properly masked */
+    /** @methodtype command-method */
     public insert(i: number, c: string): void {
         if (i < 0 || i > this.components.length) {
             throw new Error("Index out of range");
@@ -83,10 +90,12 @@ export class Name {
     }
 
     /** Expects that new Name component c is properly masked */
+    /** @methodtype command-method */
     public append(c: string): void {
         this.components.push(c);
     }
 
+    /** @methodtype command-method */
     public remove(i: number): void {
         if (i < 0 || i >= this.components.length) {
             throw new Error("Index out of range");
