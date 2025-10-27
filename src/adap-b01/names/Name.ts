@@ -20,7 +20,11 @@ export class Name {
 
     /** Expects that all Name components are properly masked */
     constructor(other: string[], delimiter?: string) {
-        throw new Error("needs implementation or deletion");
+        if (!Array.isArray(other)) {
+            throw new Error("Expected an array of components");
+        }
+        this.components = [...other];
+        this.delimiter = delimiter ?? this.delimiter;
     }
 
     /**
@@ -29,7 +33,11 @@ export class Name {
      * Users can vary the delimiter character to be used
      */
     public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+        let noEscapes = this.components.map(c=>
+            c.replaceAll(ESCAPE_CHARACTER+ESCAPE_CHARACTER, ESCAPE_CHARACTER));
+        return noEscapes.map(c=>
+            c.replaceAll(ESCAPE_CHARACTER + this.delimiter, this.delimiter))
+            .join(delimiter);
     }
 
     /** 
@@ -38,36 +46,52 @@ export class Name {
      * The special characters in the data string are the default characters
      */
     public asDataString(): string {
-        throw new Error("needs implementation or deletion");
+        if(DEFAULT_DELIMITER !== this.delimiter){
+            let masked = this.components.map(c => c.replaceAll(DEFAULT_DELIMITER, ESCAPE_CHARACTER + DEFAULT_DELIMITER));
+            return masked.join(DEFAULT_DELIMITER);
+        }
+        return this.components.join(DEFAULT_DELIMITER);
     }
 
     /** Returns properly masked component string */
     public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of range");
+        }
+        return this.components[i];
     }
 
     /** Expects that new Name component c is properly masked */
     public setComponent(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of range");
+        }
+        this.components[i] = c;
     }
 
      /** Returns number of components in Name instance */
      public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+        return this.components.length;
     }
 
     /** Expects that new Name component c is properly masked */
     public insert(i: number, c: string): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i > this.components.length) {
+            throw new Error("Index out of range");
+        }
+        this.components.splice(i, 0, c);
     }
 
     /** Expects that new Name component c is properly masked */
     public append(c: string): void {
-        throw new Error("needs implementation or deletion");
+        this.components.push(c);
     }
 
     public remove(i: number): void {
-        throw new Error("needs implementation or deletion");
+        if (i < 0 || i >= this.components.length) {
+            throw new Error("Index out of range");
+        }
+        this.components.splice(i, 1);
     }
-
 }
+
