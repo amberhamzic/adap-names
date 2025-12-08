@@ -1,3 +1,4 @@
+import { InvalidStateException } from "../common/InvalidStateException";
 import { Name } from "../names/Name";
 import { StringName } from "../names/StringName";
 import { Directory } from "./Directory";
@@ -28,6 +29,10 @@ export class RootNode extends Directory {
 
     protected doSetBaseName(bn: string): void {
         // null operation
+    }
+
+    protected assertValidName(bn : string) : void{
+        InvalidStateException.assert(this.doGetBaseName() === "");
     }
 
 }

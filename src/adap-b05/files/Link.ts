@@ -1,11 +1,14 @@
 import { Node } from "./Node";
 import { Directory } from "./Directory";
+import { assertIsNotNullOrUndefined } from "../names/helpers";
 
 export class Link extends Node {
 
     protected targetNode: Node | null = null;
 
     constructor(bn: string, pn: Directory, tn?: Node) {
+        assertIsNotNullOrUndefined(bn);
+        assertIsNotNullOrUndefined(pn);
         super(bn, pn);
 
         if (tn != undefined) {
@@ -18,6 +21,7 @@ export class Link extends Node {
     }
 
     public setTargetNode(target: Node): void {
+        assertIsNotNullOrUndefined(target);
         this.targetNode = target;
     }
 
@@ -27,6 +31,7 @@ export class Link extends Node {
     }
 
     public rename(bn: string): void {
+        assertIsNotNullOrUndefined(bn);
         const target = this.ensureTargetNode(this.targetNode);
         target.rename(bn);
     }

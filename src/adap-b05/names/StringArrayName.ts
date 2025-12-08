@@ -1,69 +1,86 @@
 import { DEFAULT_DELIMITER, ESCAPE_CHARACTER } from "../common/Printable";
 import { Name } from "./Name";
 import { AbstractName } from "./AbstractName";
+import { assertComponentProperlyMasked, assertIsValidIndex } from "./helpers";
+import { IllegalArgumentException } from "../common/IllegalArgumentException";
 
 export class StringArrayName extends AbstractName {
 
+    protected delimiter: string = DEFAULT_DELIMITER;
     protected components: string[] = [];
 
-    constructor(source: string[], delimiter?: string) {
-        super();
-        throw new Error("needs implementation or deletion");
-    }
+    constructor(other: string[], delimiter?: string) {
+        super(delimiter);
 
-    public clone(): Name {
-        throw new Error("needs implementation or deletion");
+        this.components = [...other];
     }
 
     public asString(delimiter: string = this.delimiter): string {
-        throw new Error("needs implementation or deletion");
+        if(delimiter.length !== 1){
+            throw new IllegalArgumentException("delim must be one character");
+        }
+
+        return this.components
+            .map(c => c.replaceAll(ESCAPE_CHARACTER + ESCAPE_CHARACTER, ESCAPE_CHARACTER))
+            .map(c => c.replaceAll(ESCAPE_CHARACTER + this.delimiter, this.delimiter))
+            .join(delimiter);
     }
 
     public asDataString(): string {
-        throw new Error("needs implementation or deletion");
-    }
+        if(this.delimiter === DEFAULT_DELIMITER){
+            return this.components.join(DEFAULT_DELIMITER);
+        }
 
-    public isEqual(other: Name): boolean {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public getHashCode(): number {
-        throw new Error("needs implementation or deletion");
-    }
-
-    public isEmpty(): boolean {
-        throw new Error("needs implementation or deletion");
+        return this.components
+            .map(c => c.replaceAll(ESCAPE_CHARACTER + this.delimiter, this.delimiter))
+            .map(c => c.replaceAll(DEFAULT_DELIMITER, ESCAPE_CHARACTER + DEFAULT_DELIMITER))
+            .join(DEFAULT_DELIMITER);
     }
 
     public getDelimiterCharacter(): string {
-        throw new Error("needs implementation or deletion");
+        return this.delimiter;
+    }
+
+    public isEmpty(): boolean {
+        if(this.getNoComponents() === 0) return true;
+        return false;
     }
 
     public getNoComponents(): number {
-        throw new Error("needs implementation or deletion");
+        return this.components.length;
     }
 
     public getComponent(i: number): string {
-        throw new Error("needs implementation or deletion");
+        assertIsValidIndex(i, this.getNoComponents());
+        return this.components[i];
     }
 
-    public setComponent(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
+    public setComponent(i: number, c: string): void {
+        assertIsValidIndex(i, this.getNoComponents());
+        assertComponentProperlyMasked(c, this.delimiter);
+        this.components[i] = c;
     }
 
-    public insert(i: number, c: string) {
-        throw new Error("needs implementation or deletion");
+    public insert(i: number, c: string): void {
+        assertIsValidIndex(i, this.getNoComponents() + 1);
+        assertComponentProperlyMasked(c, this.delimiter);
+        this.components.splice(i, 0, c);
     }
 
-    public append(c: string) {
-        throw new Error("needs implementation or deletion");
+    public append(c: string): void {
+        assertComponentProperlyMasked(c, this.delimiter);
+        this.components.push(c);
     }
 
-    public remove(i: number) {
-        throw new Error("needs implementation or deletion");
+    public remove(i: number): void {
+        assertIsValidIndex(i, this.getNoComponents());
+        this.components.splice(i, 1);
     }
 
     public concat(other: Name): void {
-        throw new Error("needs implementation or deletion");
+        for(let i = 0; i < other.getNoComponents(); i++){
+            assertComponentProperlyMasked(other.getComponent(i), this.delimiter);
+            this.append(other.getComponent(i));
+        }
     }
 }
